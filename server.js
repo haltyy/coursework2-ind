@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 let db;
 
 //connection of the mongoclient
-MongoClient.connect('mongodb+srv://sadiya:sadiyamuhd@cluster0.xzza6.mongodb.net/test', (err, client) => {
+MongoClient.connect('mongodb+srv://sadiya:sadiyamuhd@cluster0.xzza6.mongodb.net', (err, client) => {
     db = client.db('afterschoolclub');
 });
 

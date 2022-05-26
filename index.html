@@ -9,296 +9,240 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel = "shortcut icon" type = "image/x-icon" href = "static/favicon.svg">
 </head>
 
 <body>
     <div id="app">
         <header>            
-            <nav class="navbar">
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#courses">Courses</a></li>
-                </ul>
-            </nav>
-
-            <!-- creating the checkout button -->
+            
+            <!-- creating checkout button -->
             <button class="checkout" v-on:click="showCheckout" v-if="cartItemCount >= 1">
-                <span class="fas fa-cart-plus">&nbsp &nbsp Checkout</span>
+                <span class="fas fa-cart-plus"> Checkout</span>
                 <span>{{cartItemCount}}</span>
             </button>
 
-            <!-- disbaling the checkout button if no items are added -->
+            <!-- disbaling the checkout button when there is no added lesson -->
             <button class="checkout" disabled='disabled' v-else>
-                <span class="fas fa-cart-plus">&nbsp &nbsp Checkout</span>
+                <span class="fas fa-cart-plus">Checkout</span>
             </button>
         </header>
 
-        <!-- creating the home page if showLessons is True-->
         <div v-if="showLessons">
-            <section class="home" id="home">
-                <h1>After School Club</h1>
-                <p>Engage in artistic, creative, physical and scientific activities</p>
-            </section>
-
-
             <!-- list of courses -->
-            <section class="course" id="courses">
-                <h1>Club Activities to Choose From</h1> <br><br>
+            <section class="lesson">
+                <h1>List Of Lessons</h1> <br><br>
 
-                <!-- Drop down Sort -->
+                <!--adding drop down -->
                 <select v-model="sorters.type" class="dropdown">
                     <option disabled value="Sort">Sort</option>
                     <option v-for="(sort, key) in sorts" v-bind:value="sort">{{key}}</option>
                 </select>  
                 
-                <!-- Creating the Ascending/Descending radio button -->
-                <span class="radios">
+                <!-- adding ascending and descending button -->
+                <span class="rad">
                     <input v-if = "sorters.type == 'Sort'" disabled = "disabled" type="radio" id="asc" value="ascending" v-model="sorters.order" >
                     <input v-else type="radio" id="asc" value="ascending" v-model="sorters.order" >
                     <label for="asc" class="radioButton">Ascending</label>
                 </span>
                     
-                <span class="radios">
+                <span class="rad">
                     <input v-if = "sorters.type == 'Sort'" disabled = "disabled" type="radio" id="dec" value="descending" v-model="sorters.order">
                     <input v-else type="radio" id="dec" value="descending" v-model="sorters.order">
                     <label for="dec" class="radioButton">Descending</label>
                 </span>
 
-                <!-- Creating the search box -->
+                <!-- adding search feature -->
                 <span class="searchBox">
                     <i class="fas fa-search" style="height: 100px; width: 20px;"></i> &nbsp
-                    <input type="text" v-model="sorters.search"  placeholder="search something..."> 
+                    <input type="text" v-model="sorters.search"  placeholder="search"> 
                 </span>
                     
-                <!-- If no sort selection is made, the lessons are displayed -->
-                <div class="main" v-if = "sorters.type == 'Sort' && sorters.search == ''">
+                <div class="position" v-if = "sorters.type == 'Sort' && sorters.search == ''">
 
-                    <!-- Making the lesson card for each of the lessons in lesson.js -->
-                    <div class="lesson_cards" id="lesson.id" v-for="lesson in lessons">
+                    <div class="lesson_boxes" id="lesson.id" v-for="lesson in lessons">
 
-                        <!-- Binding an image -->
+                        <!-- Binding image -->
                         <div class="image">
-                            <img v-bind:src="lesson.image" alt="Lesson Image">
+                            <img v-bind:src="lesson.image" alt="">
                         </div>
 
-                        <!-- Displaying the details -->
+                        <!-- lessons list display -->
                         <div class="title"><p>{{lesson.subject}}</p></div>
                         <div class="location">Location: {{lesson.location}}</div>
                         <div class="spaces">Spaces Left: {{lesson.spaces}}</div>
-                        <div class="price">{{lesson.price}} £ </div>
-
-                        <!-- Displaying the ratings -->
+                        <div class="price">$ {{lesson.price}} </div>
                        
-
-                        <!-- Displaying the "Add to Cart" Button -->
+                        <!-- add to cart Button -->
                         <button class="addToCart" v-on:click = "addLessonToCart(lesson)" v-if="canAddToCart(lesson)">Add to Cart</button>
-
-                        <!-- Disabling the button if the lessons cannot be added -->
                         <button class="addToCart" disabled = "disabled" v-else>Add to Cart</button>
 
-                        <!-- Showing the remaining spaces for the lesson -->
-                        <span class="button_information" v-if = "lesson.spaces == 0">All Out!</span>
-                        <span class="button_information" v-if = "lesson.spaces < 5 && lesson.spaces > 0">Only {{lesson.spaces}} left!</span>
+                        <!-- remaining space count -->
+                        <span class="button_info" v-if = "lesson.spaces == 0">All Out!</span>
+                        <span class="button_info" v-if = "lesson.spaces < 5 && lesson.spaces > 0">Only {{lesson.spaces}} left!</span>
+                    </div>
+                </div>
+
+                <div class="position" v-else-if = "sorters.type != 'Sort' && sorters.search == ''">
+
+                    <!-- lesson boxes -->
+                    <div class="lesson_boxes" id="lesson.id" v-for="lesson in sortLessons(lessons)">
+                        <div class="image">
+                            <img v-bind:src="lesson.image" alt="">
+                        </div>
+                        <div class="title"><p>{{lesson.subject}}</p></div>
+                        <div class="location">Location: {{lesson.location}}</div>
+                        <div class="spaces">Spaces Left: {{lesson.spaces}}</div>
+                        <div class="price">$ {{lesson.price}} </div>
                         
-                    </div>
-                    <!-- End of Lesson card -->
-                </div>
-
-                <!-- If a sort selection is made, sorted lessons are displayed -->
-                <div class="main" v-else-if = "sorters.type != 'Sort' && sorters.search == ''">
-
-                    <!-- Making the lesson card -->
-                    <div class="lesson_cards" id="lesson.id" v-for="lesson in sortLessons(lessons)">
-
-                        <!-- Binding an image -->
-                        <div class="image">
-                            <img v-bind:src="lesson.image" alt="Lesson Image">
-                        </div>
-
-                        <!-- Adding the details -->
-                        <div class="title"><p>{{lesson.subject}}</p></div>
-                        <div class="location">Location: {{lesson.location}}</div>
-                        <div class="spaces">Spaces Left: {{lesson.spaces}}</div>
-                        <div class="price">{{lesson.price}} £ </div>
-                       
-
-                        <!-- Adding the "Add to Cart" Button -->
+                        <!-- add to cart Button -->
                         <button class="addToCart" v-on:click = "addLessonToCart(lesson)" v-if="canAddToCart(lesson)">Add to Cart</button>
                         <button class="addToCart" disabled = "disabled" v-else>Add to Cart</button>
-                        <span class="button_information" v-if = "lesson.spaces == 0">All Out!</span> 
-                        <span class="button_information" v-else-if = "lesson.spaces > 0 && lesson.spaces < 5">Only {{lesson.spaces}} left!</span>
+                        <span class="button_info" v-if = "lesson.spaces == 0">All Out!</span> 
+                        <span class="button_info" v-else-if = "lesson.spaces > 0 && lesson.spaces < 5">Only {{lesson.spaces}} left!</span>
                     </div>
-                    <!-- End of lesson card -->
                 </div>
 
-                <!-- If there is a searched item, the lessons with the searched word is displayed -->
-                <div class="main" id="searchdisplay" v-else>
-                    <h2>Search results</h2>
+                <!-- searched lessons -->
+                <div class="position" id="searchdisplay" v-else>
                     <div v-for="lesson in searchedresult"></div>
                     <!-- Displaying the searched lessons -->
-                    <div class="lesson_cards" id="lessons.id"  v-for="lessons in searchedlessons">
+                    <div class="lesson_boxes" id="lessons.id"  v-for="lessons in searchedlessons">
 
-                        <!-- Binding an image -->
                         <div class="image">
-                            <img v-bind:src="lessons.image" alt="Lesson Image">
+                            <img v-bind:src="lessons.image" alt="">
                         </div>
 
-                        <!-- Adding the details -->
                         <div class="title"><p>{{lessons.subject}}</p></div>
                         <div class="location">Location: {{lessons.location}}</div>
                         <div class="spaces">Spaces Left: {{lessons.spaces}}</div>
-                        <div class="price">{{lessons.price}} £ </div>
+                        <div class="price">$ {{lessons.price}}</div>
                         
 
-                        <!-- Adding the "Add to Cart" Button -->
                         <button class="addToCart" v-on:click = "addLessonToCart(lessons)" v-if="canAddToCart(lessons)">Add to Cart</button>
                         <button class="addToCart" disabled = "disabled" v-else>Add to Cart</button>
-                        <span class="button_information" v-if = "lessons.spaces == 0">All Out!</span>
-                        <span class="button_information" v-else-if = "lessons.spaces > 0 && lessons.spaces < 5">Only {{lessons.spaces}} left!</span>
+                        <span class="button_info" v-if = "lessons.spaces == 0">All Out!</span>
+                        <span class="button_info" v-else-if = "lessons.spaces > 0 && lessons.spaces < 5">Only {{lessons.spaces}} left!</span>
                     </div>
                 </div>
             </section>
-            <!-- End of displaying lessons -->
     </div>
-    <!-- Displaying the checkout page, if ShowLessons is false -->
+
+    <!--  checkout page -->
     <div class="checkoutPage" v-else>
-        <h3>CheckOut!</h3>
+        <h3>Checkout Here</h3>
 
-        <!-- Displaying the lessons in the cart, if the cart is not empty -->
-        <div class="main" v-if = "this.cart.length > 0" >
+        <div class="position" v-if = "this.cart.length > 0" >
 
-            <!-- displaying the lesson card -->
-            <div class="lesson_cards" id="lesson.id" v-for="lesson in this.cart" >
+            <div class="lesson_boxes" id="lesson.id" v-for="lesson in this.cart" >
 
-                <!-- Binding an image -->
                 <div class="image">
-                    <img v-bind:src="lesson.image" alt="Lesson Image">
+                    <img v-bind:src="lesson.image" alt="">
                 </div>
 
-                <!-- Adding the details -->
                 <div class="title"><p>{{lesson.subject}}</p></div>
                 <div class="location">Location: {{lesson.location}}</div>
-                <div class="price">{{lesson.price}} £ </div>
+                <div class="price">$ {{lesson.price}}</div>
             
 
-                <!-- Adding a "Remove" button to remove the lesson from cart -->
-                <button class="removeButton" v-on:click = "remove(lesson)" >
-                    <span  class="fas fa-trash-alt">&nbsp Remove</span> 
+                <!-- remove button -->
+                <button class="removebutton" v-on:click = "remove(lesson)" >
+                    <span  class="far fa-trash-alt">&nbsp Remove</span> 
                 </button>
             </div>
-            <!-- End of lesson card -->
         </div>
-        <!-- If all products are removed from cart, button is displayed to take back to the products page -->
-        <div class="main" v-else>
+        <!-- back button -->
+        <div class="position" v-else>
             <button v-on:click = "showLessonPage()" class = "goBackBtn">
-                <span  class="fas fa-arrow-left">&nbsp Back To Products</span>
+                <span  class="fas fa-arrow-left">Back</span>
             </button>
         </div>
         
-        <!-- Checkout Form -->
-        <div class="checkoutForm">
-            <strong id="successfulCheckout"></strong>
-            <!-- Name input field -->
+        <!-- submit Form -->
+        <div class="submitForm">
+            <strong id="submitsuccess"></strong>
+
             <strong>Name: </strong>
-            <span class="checkoutInput">
-                <input type="text" v-model="lessonOrder.name"  placeholder="Enter Name..." v-on:keypress = "isLetter($event)">
+            <span class="submitInput">
+                <input type="text" v-model="lessonOrder.name"  placeholder="Enter Name" v-on:keypress = "Letter($event)">
             </span>
             
-            <!-- Phone number field -->
-            <strong>Phone: </strong>
-            <span class="checkoutInput">
-                <input type="text" v-model="lessonOrder.phone" placeholder="0123" v-on:keypress = "isNumber($event)"> <p></p>
+            <strong>Phone Number: </strong>
+            <span class="submitInput">
+                <input type="text" v-model="lessonOrder.phone" placeholder="Enter Number" v-on:keypress = "Number($event)"> <p></p>
             </span>
             
-            <!-- Checkout button. Only enabled if values to Name and Phone are added -->
-            <button v-if="lessonOrder.name == '' || lessonOrder.phone == ''" disabled = "disabled">Checkout</button>
-            <button v-else v-on:click = "CheckoutLessons()">Checkout</button>
-            <p style="font-size: 1.5rem; color: red; margin-top: 0; padding-bottom: 70px; padding-left: 10%;">{{lessonOrder.errorMessage}}</p>
+            <!-- Submit button -->
+            <button v-if="lessonOrder.name == '' || lessonOrder.phone == ''" disabled = "disabled">Submit</button>
+            <button v-else v-on:click = "SubmitLessons()">Submit</button>
+            <p style="font-size: 1.5rem; color: red; margin-top: 0; padding-bottom: 80px; padding-left: 10%;">{{lessonOrder.errorMessage}}</p>
             
         </div>
-        <!-- End of Checkout form -->
-
     </div>
-    <!-- End of checkout page -->
     </div>
-    <!-- End of #app div element -->
     
-    <!-- Script tag  -->
-    <script>
 
-        //Creating a new Vue instance
-        var schoolClub = new Vue({
+<script>
+
+        // Vue instance
+        var afterschoolClub = new Vue({
             el: "#app",
             data: {
                 sitename: "After School Club",
-                lessons: [],           //lessons from lesson.js
+                lessons: [],          
                 searchedlessons: [],
-                sorters: {                  //stores information about the selection for sorting and search
+                sorters: {                  //sorting and search info storage
                     type: "Sort",
                     order: "ascending",
                     search: ""
                 },
-                sorts: {                    //The lesson can be sorted using price, location and subject
+                sorts: {                    //sorting lessons by price, location and subject
                     price : "Price",
                     location : "Location",
                     subject : "Subject"
                 },
-                lessonOrder: {              //Stores user information from checkout page. The error message is displayed if there is an invalid input
+                lessonOrder: {              //for storing phone number and name input
                     name: "",
                     phone: "",
                     errorMessage: ""
                 },
-                showLessons: true,          //ShowLessons, if true, the lessons are displayed. If false, the checkout page is displayed
-                cart: []                    //array to store the items added to cart
+                showLessons: true,          
+                cart: []                    //array to store lessons in cart
             },
-            created: function(){            //created function fetches the lessons
+            created: function(){            // function to fetch  lessons fron server
 
-                //fetching the lessons from server
-                fetch('https://cst3145cwhadassah.herokuapp.com/collection/lessons').then(
+                fetch('https://cst3145demo3.herokuapp.com/collection/lessons').then(
                     function(response){
                         response.json().then(
                             function(json){
-                                schoolClub.lessons = json;
+                                afterschoolClub.lessons = json;
                             });
                     });
             },
             methods:{
-                //function that toggles showLesson from true and false, when user clicks the checkout button
                 showCheckout(){             
                     this.showLessons = this.showLessons ? false : true;
                 },
-                //If cart is empty, takes user back to products page
+                //takes user back to lesson list 
                 showLessonPage(){
                     this.showLessons = this.showLessons ? false : true;
                 },
                 //Funtion to add lesson to cart
                 addLessonToCart(lesson){    
-                    //reduce the spaces by 1
                     lesson.spaces -= 1;
                     this.cart.push(lesson);
                 },
 
-                //funtion to check if the lesson can be added to cart. if spaces is greater than 0.
+                //if number of spaces is greater than 0 add the lesson to cart.
                 canAddToCart(lesson){
                     return lesson.spaces > 0;
                 },
 
-                //funtion to return the count of a lesson in the cart
-                cartCount(id){
-                    let count = 0;
-                    for(let i = 0; i < this.cart.length; i++){
-                        if(this.cart[i].id === id)
-                            count++;  
-                    }
-                    return count;
-                },
+               
 
-                //funtion to remove a lesson from checkout page
+                //remove lesson from lessons in cart and return it to main lesson list
                 remove(lesson){
                     let count = 1;
 
-                    //increase the spaces by one on the main page
                     lesson.spaces += 1;
                     for(let i = 0; i <= this.cart.length; i++){
                             if(this.cart[i].id === lesson.id){
@@ -308,13 +252,12 @@
                     }
                 },
 
-                //funtion to return the list of sorted lessons based on user selection
+                //showing the list of sorted lessons 
                 sortLessons(lesson){
 
-                    //To sort by price
+                    //price sorting
                     if(this.sorters.type == "Price"){
 
-                        //If user has selected descending i.e., from highest to lowest
                         if(this.sorters.order == "descending"){
                             function compare(a,b){
                                 if(a.price > b.price){
@@ -327,7 +270,6 @@
                             }
                             return lesson.sort(compare);
                         }
-                        //if user selected the ascending option (Default)
                         else{
                             function compare(a,b){
                                 if(a.price > b.price){
@@ -342,10 +284,9 @@
                         }
                     }
 
-                    //Sorting by location
+                    //location sorting
                     else if(this.sorters.type == "Location"){
 
-                        //Sorting the lessons in descending alphabetical order by location
                         if(this.sorters.order == "descending"){
                             function compare(a,b){
                                 if(a.location > b.location){
@@ -358,7 +299,6 @@
                             }
                             return lesson.sort(compare);
                         }
-                        //Sorting lessons in ascending alphabetical order by location(Default)
                         else{
                             function compare(a,b){
                                 if(a.location > b.location){
@@ -372,10 +312,9 @@
                             return lesson.sort(compare);
                         }
                     }
-                    //To sort by subject
+                    //subject sorting
                     else if(this.sorters.type == "Subject"){
 
-                        //Sorting the lessons in descending alphabetical order by subject
                         if(this.sorters.order == "descending"){
                             function compare(a,b){
                                 if(a.subject > b.subject){
@@ -388,7 +327,6 @@
                             }
                             return lesson.sort(compare);
                         }
-                        //Sorting the lessons in ascending alphabetical order by subject (default)
                         else{
                             function compare(a,b){
                                 if(a.subject > b.subject){
@@ -404,46 +342,40 @@
                     }
                 },
 
-                //function to check if the user input has only letters in Name (checkout form)
-                isLetter(e){
-                    //for every character input
+                //submit form restricting to just letters
+                Letter(e){
                     let char = String.fromCharCode(e.keyCode); 
 
-                    //if the character is an alphabet
                     if(/^[A-Za-z]+$/.test(char)){
                         this.lessonOrder.errorMessage = "";
                         return true;
                     }  
                     else{
-                        //displaying error message
-                        this.lessonOrder.errorMessage = "Please enter only characters";
+                        // error message
+                        this.lessonOrder.errorMessage = "enter only characters";
                     } 
                 },
 
                 //function to check if the user input for phone has only numbers
-                isNumber(e){
+                Number(e){
 
-                    //matching the user input with the character code of 0-9
                     if(e.charCode >= 48 && e.charCode <= 57 ){
                         this.lessonOrder.errorMessage = "";
                         return true;
                     }
                     else{
-                        //displaying error message
-                        this.lessonOrder.errorMessage = "Please enter only numbers";
+                        //error message
+                        this.lessonOrder.errorMessage = "enter only numbers";
                     }
                 },
 
-                //function to checkout the lessons
-                CheckoutLessons(){
+                SubmitLessons(){
                      if(this.lessonOrder.errorMessage == "" && this.cart.length > 0){
-                         alert("Successfully placed order!");
-                         document.getElementById('successfulCheckout').innerHTML = "Thank you for purchasing! <br>"
+                         alert("order placed Successfully");
+                         document.getElementById('submitsuccess').innerHTML = "Thank you<br>"
                          
-                         //function to add the order to the database
                          addOrder(this.lessonOrder.name, this.lessonOrder.phone, this.cart);
 
-                         //function to update the spaces of the lessons
                          updateorder(this.cart);
 
                          //clearing the fields
@@ -452,18 +384,14 @@
                          this.cart.splice(0, this.cart.length);
                      }
                     else if(this.cart.length == 0){
-                        alert("No products in cart!")
+                        alert("cart is EMPTY!")
                     }
-                    else{
-                        alert("Please enter the correct values.");
-                    }
-
-                    //Add Order function. The following function addes the order to the database
+                    
+                    //adding order to database
                     function addOrder(name, phone, cartOrder){
                         var final_cart = [];
                         var n = 0;
 
-                        //making an array with unique orders incase same lessons are ordered
                         for(i = 0; i < cartOrder.length; i++){
                             const uniqueOrder = {"id" : cartOrder[i]._id, "spaces" : 1};
                             if(final_cart.length == 0){
@@ -487,7 +415,7 @@
                         const newOrder = {"phone" : phone, "name" : name, "order" : final_cart};
 
                         //POST request to add the order to the database.
-                        fetch("https://cors-anywhere.herokuapp.com/cst3145cwhadassah.herokuapp.com/collection/orders", {
+                        fetch("https://cors-anywhere.herokuapp.com/cst3145demo3.herokuapp.com/collection/orders", {
                             method : 'POST',
                             headers: {
                                 "Content-Type" : "application/json",
@@ -528,7 +456,7 @@
                         
                         //PUT request to update the lesson spaces
                         for(i = 0; i < final_cart.length; i++){
-                                fetch("https://cors-anywhere.herokuapp.com/cst3145cwhadassah.herokuapp.com/collection/lessons/"+ final_cart[i].id, {
+                                fetch("https://cors-anywhere.herokuapp.com/cst3145demo3.herokuapp.com/collection/lessons/"+ final_cart[i].id, {
                                 method : 'PUT',
                                 headers: {
                                     "Content-Type" : "application/json"
@@ -554,11 +482,11 @@
                     if(searchText != ""){
 
                         //GET request to retrieve the lessons from the server
-                        fetch('https://http://localhost:3000//collection/lessons/'+searchText).then(
+                        fetch('https://cst3145demo3.herokuapp.com//collection/lessons/'+searchText).then(
                                 function (res) {
                                     res.json().then(
                                         function (json) {       
-                                           schoolClub.searchedlessons = JSON.parse(JSON.stringify(json));
+                                           afterschoolclub.searchedlessons = JSON.parse(JSON.stringify(json));
                                             console.log(JSON.parse(JSON.stringify(json)));
                                             return json;
                                         });
