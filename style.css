@@ -5,6 +5,10 @@
     padding: 0;
     box-sizing: border-box;
     border: none;
+    outline: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: all .2s linear;
 }
 
 html{
@@ -98,7 +102,7 @@ header{
     margin-top: 14px;
     font-weight: bold;
     font-size: 2rem;
-    text-align: justify;
+    text-align: center;
 }
 .location, .price, .spaces{
     margin-top: 14px;

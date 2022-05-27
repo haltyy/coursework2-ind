@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "2560ab45-33bf-4518-b910-5078f950a72c",
+		"name": "afterschoolclub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21073087"
+	},
+	"item": [
+		{
+			"name": "return lessons",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/lessons",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"lessons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"phone\":\"876\",\r\n\"name\":\"ali\",\r\n\"order\":[{\"id\":\"628e9061c8168bce7c2177b5\",\"spaces\":1}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/orders",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new order 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"phone\":\"564\",\r\n\"name\":\"fiq\",\r\n\"order\":[{\"id\":\"628e9061c8168bce7c2177b6\",\"spaces\":1}]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/orders",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "return lesson 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/lessons",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"lessons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update spaces",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"spaces\":5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/lessons/628e9061c8168bce7c2177b5",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"lessons",
+						"628e9061c8168bce7c2177b5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"spaces\":5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://cst3145demo3.herokuapp.com/collection/lessons/628e9061c8168bce7c2177b6",
+					"protocol": "https",
+					"host": [
+						"cst3145demo3",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"collection",
+						"lessons",
+						"628e9061c8168bce7c2177b6"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

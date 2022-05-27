@@ -184,7 +184,7 @@
 <script>
 
         // Vue instance
-        var afterschoolClub = new Vue({
+        var afterschoolclub = new Vue({
             el: "#app",
             data: {
                 sitename: "After School Club",
@@ -214,7 +214,7 @@
                     function(response){
                         response.json().then(
                             function(json){
-                                afterschoolClub.lessons = json;
+                                afterschoolclub.lessons = json;
                             });
                     });
             },
@@ -378,8 +378,7 @@
 
                          updateorder(this.cart);
 
-                         //clearing the fields
-                         this.lessonOrder.name = "";
+                         this.lessonOrder.name = ""; //input unit retutns empty after every input
                          this.lessonOrder.phone = "";
                          this.cart.splice(0, this.cart.length);
                      }
@@ -411,10 +410,9 @@
                             }
                         }
 
-                        //final order object that is added into MongoDB
                         const newOrder = {"phone" : phone, "name" : name, "order" : final_cart};
 
-                        //POST request to add the order to the database.
+                        //POST request  adding  order to the the mongodb database.
                         fetch("https://cors-anywhere.herokuapp.com/cst3145demo3.herokuapp.com/collection/orders", {
                             method : 'POST',
                             headers: {
@@ -429,8 +427,7 @@
                     }
                     
 
-                    //The following function updates the spaces of the lessons when an order is placed
-                    function updateorder(cart){
+                    function updateorder(cart){ //updates spaces in the lessons after placing an order
                         var final_cart = [];
                         var n = 0;
 
@@ -454,7 +451,7 @@
                             }
                         }
                         
-                        //PUT request to update the lesson spaces
+                        // a PUT request updating spaces in lessons
                         for(i = 0; i < final_cart.length; i++){
                                 fetch("https://cors-anywhere.herokuapp.com/cst3145demo3.herokuapp.com/collection/lessons/"+ final_cart[i].id, {
                                 method : 'PUT',
@@ -471,17 +468,17 @@
 
             },
             computed: {
-                //function to return cart length                
+                //returning cart length                
                 cartItemCount(){
                     return this.cart.length || '';
                 },
-                //function to retrieve the searched lessons
+                //retrieving the searched lessons
                 searchedresult(){
                     let searchText=this.sorters.search.toLowerCase();
 
                     if(searchText != ""){
 
-                        //GET request to retrieve the lessons from the server
+                    
                         fetch('https://cst3145demo3.herokuapp.com//collection/lessons/'+searchText).then(
                                 function (res) {
                                     res.json().then(
@@ -496,8 +493,6 @@
             }
         });
     </script>
-    <!-- End of script tag -->
-    
+        
 </body>
 </html>
-<!-- End of Code -->
