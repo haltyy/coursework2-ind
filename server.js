@@ -38,7 +38,7 @@ app.param('collectionName', (req, res, next, collectionName) => {
     return next();
 });
 
-//mongodb GET request 
+//mongodb GET request  
 app.get('/collection/:collectionName', (req, res, next) => {
     req.collection.find({}).toArray((e, results) => {
         if (e) return next(e)
@@ -90,7 +90,7 @@ app.put('/collection/:collectionName/:id', (req, res, next) => {
     })
     })
 
-//Static middleware. This middleware checks if an image exists in the static folder
+//the static middleware to check existing file
     app.use(function(req, res, next){
         var filePath = path.join(__dirname, "static", req.url);
         fs.stat(filePath, function(err, fileInfo){
@@ -98,7 +98,7 @@ app.put('/collection/:collectionName/:id', (req, res, next) => {
                 next();
                 return;
             }
-            if(fileInfo.isFile()){ //checks if the file exists in the static directory
+            if(fileInfo.isFile()){ 
                 res.sendFile(filePath);
             }else{
                 
@@ -107,13 +107,12 @@ app.put('/collection/:collectionName/:id', (req, res, next) => {
         });
     });
 
-//If an image does not exist in the static folder, the error message is displayed.
+//the error message is shown when folder does not exit.
     app.use(function(req, res){
         res.status(404);
         res.send("File not Found!");
     });   
 
-//deploying the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log("Server running...");
